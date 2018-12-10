@@ -1,3 +1,4 @@
+from __future__ import print_function
 from os.path import join, dirname
 import numpy as np
 import time
