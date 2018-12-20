@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Python File Template 
+Python File Template
 """
 import codecs
 import inspect
@@ -521,7 +521,6 @@ def process_data_examples(src_trgs_pairs, word2id, id2word, opt, mode='one2one',
             return_example_list.append(one2many_example)
         else:
             return_example_list.extend(one2one_example_list)
-
     print('Find #(doc with oov in targets)/#(all docs) = %d/%d' % (count_oov_in_targets, len(return_example_list)))
     print('Find max number of oov words in a text = %d' % (max_oov_num_in_src))
     print('max_oov sentence: %s' % str(max_oov_src))
@@ -885,3 +884,49 @@ def process_and_export_dataset(tokenized_src_trg_pairs,
 
     for len_, count in sorted_len:
         print('%d,%d' % (len_, count))
+
+
+def process_dataset(tokenized_src_trg_pairs,
+                               word2id, id2word,
+                               opt, output_path,
+                               dataset_name,
+                               data_type=None):
+    """
+    :param tokenized_src_trg_pairs:
+    :param word2id:
+    :param id2word:
+    :param opt:
+    :param output_path:
+    :param dataset_name:
+    :param data_type: one of train, valid, test
+    :return:
+    """
+    assert data_type is not None
+    assert data_type in ['train', 'valid', 'test']
+
+    print("Processing %s data, #(src_trg_pair)=%d..." % (data_type, len(tokenized_src_trg_pairs)))
+    '''
+    Convert raw data to data examples (strings to tensors)
+    '''
+    if data_type == 'train':
+        include_original = False
+    else:
+        include_original = True
+
+    print("Dumping %s %s to disk: %s" % (dataset_name, data_type, os.path.join(output_path, '%s.%s.*.pt' % (dataset_name, data_type))))
+    # import pdb; pdb.set_trace()
+    tokenized_src_trg_pairs[0][1][0].extend(['hello','world'])
+    one2one_examples = process_data_examples(
+        tokenized_src_trg_pairs, word2id, id2word, opt, mode='one2one', include_original=include_original)
+    print('#pairs of %s %s one2one  = %d' % (dataset_name, data_type, len(one2one_examples)))
+    print("Dumping one2one %s %s to disk: %s" % (dataset_name, data_type, os.path.join(output_path, '%s.%s.one2one.pt' % (dataset_name, data_type))))
+    # torch.save(one2one_examples, open(os.path.join(output_path, '%s.%s.one2one.pt' % (dataset_name, data_type)), 'wb'))
+    # del one2one_examples
+
+    one2many_exmaples = process_data_examples(
+        tokenized_src_trg_pairs, word2id, id2word, opt, mode='one2many', include_original=include_original)
+    print('#pairs of %s %s one2many = %d' % (dataset_name, data_type, len(one2many_exmaples)))
+    print("Dumping one2many %s %s to disk: %s" % (dataset_name, data_type, os.path.join(output_path, '%s.%s.one2many.pt' % (dataset_name, data_type))))
+    # torch.save(one2many_exmaples, open(os.path.join(output_path, '%s.%s.one2many.pt' % (dataset_name, data_type)), 'wb'))
+    # del one2many_exmaples
+    return one2one_examples,one2many_exmaples

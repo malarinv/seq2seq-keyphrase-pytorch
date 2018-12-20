@@ -106,16 +106,15 @@ def init_opt(description):
 def init_logging(logger_name, log_file, redirect_to_stdout=False, level=logging.INFO):
     formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(module)s: %(message)s',
                                   datefmt='%m/%d/%Y %H:%M:%S'   )
-
-    if not os.path.exists(log_file[: log_file.rfind(os.sep)]):
-        os.makedirs(log_file[: log_file.rfind(os.sep)])
-
-    fh = logging.FileHandler(log_file)
-    fh.setFormatter(formatter)
-    fh.setLevel(level)
-
     logger = logging.getLogger(logger_name)
-    logger.addHandler(fh)
+    if log_file:
+        if not os.path.exists(log_file[: log_file.rfind(os.sep)]):
+            os.makedirs(log_file[: log_file.rfind(os.sep)])
+
+        fh = logging.FileHandler(log_file)
+        fh.setFormatter(formatter)
+        fh.setLevel(level)
+        logger.addHandler(fh)
     logger.setLevel(level)
 
     if redirect_to_stdout:
@@ -125,8 +124,9 @@ def init_logging(logger_name, log_file, redirect_to_stdout=False, level=logging.
         logger.addHandler(ch)
 
     logger.info('Initializing logger: %s' % logger_name)
-    logger.info('Making log output file: %s' % log_file)
-    logger.info(log_file[: log_file.rfind(os.sep)])
+    if log_file:
+        logger.info('Making log output file: %s' % log_file)
+        logger.info(log_file[: log_file.rfind(os.sep)])
 
     return logger
 
