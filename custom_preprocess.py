@@ -40,9 +40,9 @@ if not os.path.exists(opt.subset_output_path):
 
 
 def split_data(tds):
-    train_valid, test = train_test_split(tds, test_size=0.05, random_state=1)
+    train_valid, test = train_test_split(tds, test_size=200, random_state=1)
     train, valid = train_test_split(
-        train_valid, test_size=0.05, random_state=1)
+        train_valid, test_size=100, random_state=1)
     return (train, valid, test)
 
 
