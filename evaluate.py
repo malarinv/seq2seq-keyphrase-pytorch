@@ -268,7 +268,6 @@ def evaluate_beam_search(generator, data_loader, opt, title='', epoch=1, predict
             print_trg_str_seqs = [" ".join(item) for item in filtered_trg_str_seqs]
             # print_out += "\n PREDICTION: " + " / ".join(print_pred_str_seqs)
             # print_out += "\n GROUND TRUTH: " + " / ".join(print_trg_str_seqs)
-            import pdb; pdb.set_trace()
             for topk in topk_range:
                 results_exact = evaluate(match_list_exact, filtered_pred_str_seqs, filtered_trg_str_seqs, topk=topk)
                 for k, v in zip(score_names, results_exact):
@@ -444,7 +443,6 @@ def predict_beam_search(generator, data_loader, opt, title='', epoch=1, predict_
     #                 zip(processed_pred_seqs, processed_pred_str_seqs, processed_pred_score, match_list, pred_is_valid_flags, pred_is_present_flags)):
     #             # if p_id > 5:
     #             #     break
-    #             import pdb; pdb.set_trace()
     #             preds_out += '%s\n' % (' '.join(word))
     #             if is_present:
     #                 print_phrase = '[%s]' % ' '.join(word)
