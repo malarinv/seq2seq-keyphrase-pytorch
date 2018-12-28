@@ -799,6 +799,13 @@ def load_src_trgs_pairs(source_json_path, dataset_name, src_fields, trg_fields, 
 
     return tokenized_pairs
 
+def get_tokenized_pairs(src_str,opt, valid_check=False):
+    src_trgs_pairs = [(src_str,['hello','world'])]
+    tokenized_pairs = tokenize_filter_data(src_trgs_pairs,
+                                           tokenize_fn=copyseq_tokenize,
+                                           opt=opt,
+                                           valid_check=valid_check)
+    return tokenized_pairs
 
 def generate_one2one_one2many_examples(tokenized_pairs, word2id, id2word, opt, include_original):
     one2one_examples = process_data_examples(tokenized_pairs,
@@ -888,7 +895,7 @@ def process_and_export_dataset(tokenized_src_trg_pairs,
 
 def process_dataset(tokenized_src_trg_pairs,
                                word2id, id2word,
-                               opt, output_path,
+                               opt,
                                dataset_name,
                                data_type=None):
     """
@@ -896,7 +903,6 @@ def process_dataset(tokenized_src_trg_pairs,
     :param word2id:
     :param id2word:
     :param opt:
-    :param output_path:
     :param dataset_name:
     :param data_type: one of train, valid, test
     :return:
@@ -913,20 +919,14 @@ def process_dataset(tokenized_src_trg_pairs,
     else:
         include_original = True
 
-    print("Dumping %s %s to disk: %s" % (dataset_name, data_type, os.path.join(output_path, '%s.%s.*.pt' % (dataset_name, data_type))))
-    # import pdb; pdb.set_trace()
-    tokenized_src_trg_pairs[0][1][0].extend(['hello','world'])
+    # tokenized_src_trg_pairs[0][1][0].extend(['hello','world'])
     one2one_examples = process_data_examples(
         tokenized_src_trg_pairs, word2id, id2word, opt, mode='one2one', include_original=include_original)
     print('#pairs of %s %s one2one  = %d' % (dataset_name, data_type, len(one2one_examples)))
-    print("Dumping one2one %s %s to disk: %s" % (dataset_name, data_type, os.path.join(output_path, '%s.%s.one2one.pt' % (dataset_name, data_type))))
-    # torch.save(one2one_examples, open(os.path.join(output_path, '%s.%s.one2one.pt' % (dataset_name, data_type)), 'wb'))
     # del one2one_examples
 
     one2many_exmaples = process_data_examples(
         tokenized_src_trg_pairs, word2id, id2word, opt, mode='one2many', include_original=include_original)
     print('#pairs of %s %s one2many = %d' % (dataset_name, data_type, len(one2many_exmaples)))
-    print("Dumping one2many %s %s to disk: %s" % (dataset_name, data_type, os.path.join(output_path, '%s.%s.one2many.pt' % (dataset_name, data_type))))
-    # torch.save(one2many_exmaples, open(os.path.join(output_path, '%s.%s.one2many.pt' % (dataset_name, data_type)), 'wb'))
     # del one2many_exmaples
     return one2one_examples,one2many_exmaples
