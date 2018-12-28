@@ -29,4 +29,4 @@
 
 ##### Custom PREDICTION
 
-* run `$ python -m predict_keyphrase -data data_custom/kp20k/kp20k -vocab data_custom/kp20k/kp20k.vocab.pt -exp_path "./exp-custom/attn_general.input_feeding.copy/%s.%s" -model_path "./model/attn_general.input_feeding.copy/%s.%s" -pred_path "./pred-custom/attn_general.input_feeding.copy/%s.%s" -exp "kp20k-custom" -batch_size 256 -bidirectional -copy_attention -beam_size 16 -beam_search_batch_size 32 -train_ml -attention_mode general -input_feeding`
+* run `$ python -m predict_keyphrase -data data_custom/kp20k/kp20k -vocab data_custom/kp20k/kp20k.vocab.pt -exp_path "./exp-custom/attn_general.input_feeding.copy/%s.%s" -model_path "./model/attn_general.input_feeding.copy/%s.%s" -pred_path "./pred-custom/attn_general.input_feeding.copy/%s.%s" -exp "kp20k-custom" -batch_size 256 -bidirectional -copy_attention -beam_size 16 -beam_search_batch_size 32 -train_ml -attention_mode general -input_feeding -min_src_seq_length 5`

@@ -92,9 +92,9 @@ class KeyphrasePredictor(object):
         super(KeyphrasePredictor, self).__init__()
         self.model_opts = config.init_opt(description='predictor')
         # self.vocab_path = self.model_opts.vocab#os.path.join(self.model_opts.data, 'kp20k', 'kp20k.vocab.pt')
-        parser = argparse.ArgumentParser(description='predictor',formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-        config.preprocess_opts(parser)
-        self.opt = parser.parse_args([])
+        # parser = argparse.ArgumentParser(description='predictor',formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        # config.preprocess_opts(parser)
+        # self.opt = parser.parse_args([])
         self.load()
 
     def load(self):
@@ -113,10 +113,10 @@ class KeyphrasePredictor(object):
 
     def preprocess_input(self,src_str):
         test_dataset_name='kp20k'
-        tokenized_test_pairs = pykp.io.get_tokenized_pairs(src_str,self.opt,True)
+        tokenized_test_pairs = pykp.io.get_tokenized_pairs(src_str,self.model_opts,True)
         return pykp.io.process_dataset(tokenized_test_pairs,
                                            self.model_opts.word2id, self.model_opts.id2word,
-                                           self.opt,
+                                           self.model_opts,
                                            dataset_name=test_dataset_name,
                                            data_type='test')
 
