@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Python File Template 
+Python File Template
 """
 import json
 import os
@@ -493,7 +493,7 @@ def train_model(model, optimizer_ml, optimizer_rl, criterion, train_data_loader,
                 # valid_losses    = _valid_error(valid_data_loader, model, criterion, epoch, opt)
                 # valid_history_losses.append(valid_losses)
                 valid_score_dict = evaluate_beam_search(generator, valid_data_loader, opt, title='Validating, epoch=%d, batch=%d, total_batch=%d' % (epoch, batch_i, total_batch), epoch=epoch, predict_save_path=opt.pred_path + '/epoch%d_batch%d_total_batch%d' % (epoch, batch_i, total_batch))
-                test_score_dict = evaluate_beam_search(generator, test_data_loader, opt, title='Testing, epoch=%d, batch=%d, total_batch=%d' % (epoch, batch_i, total_batch), epoch=epoch, predict_save_path=opt.pred_path + '/epoch%d_batch%d_total_batch%d' % (epoch, batch_i, total_batch))
+                # test_score_dict = evaluate_beam_search(generator, test_data_loader, opt, title='Testing, epoch=%d, batch=%d, total_batch=%d' % (epoch, batch_i, total_batch), epoch=epoch, predict_save_path=opt.pred_path + '/epoch%d_batch%d_total_batch%d' % (epoch, batch_i, total_batch))
 
                 checkpoint_names.append('epoch=%d-batch=%d-total_batch=%d' % (epoch, batch_i, total_batch))
 
@@ -512,13 +512,13 @@ def train_model(model, optimizer_ml, optimizer_rl, criterion, train_data_loader,
                     train_rl_losses = []
 
                 valid_history_losses.append(valid_score_dict)
-                test_history_losses.append(test_score_dict)
+                # test_history_losses.append(test_score_dict)
 
                 scores += [[result_dict[name] for result_dict in valid_history_losses] for name in opt.report_score_names]
                 curve_names += ['Valid-' + name for name in opt.report_score_names]
-                scores += [[result_dict[name] for result_dict in test_history_losses] for name in opt.report_score_names]
-                curve_names += ['Test-' + name for name in opt.report_score_names]
-
+                # scores += [[result_dict[name] for result_dict in test_history_losses] for name in opt.report_score_names]
+                # curve_names += ['Test-' + name for name in opt.report_score_names]
+                #
                 scores = [np.asarray(s) for s in scores]
                 # Plot the learning curve
                 plot_learning_curve_and_write_csv(scores=scores,
