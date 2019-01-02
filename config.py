@@ -90,8 +90,8 @@ def init_opt(description):
         prev_opt.plot_path = opt.plot_path
 
         for k,v in vars(opt).items():
-            if not hasattr(prev_opt, k):
-                setattr(prev_opt, k, v)
+            # if not hasattr(prev_opt, k):
+            setattr(prev_opt, k, v)
 
         opt = prev_opt
     else:

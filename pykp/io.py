@@ -800,7 +800,7 @@ def load_src_trgs_pairs(source_json_path, dataset_name, src_fields, trg_fields, 
     return tokenized_pairs
 
 def get_tokenized_pairs(src_str,opt, valid_check=False):
-    src_trgs_pairs = [(src_str,['hello','world'])]
+    src_trgs_pairs = [(src_str,['the','world'])]
     tokenized_pairs = tokenize_filter_data(src_trgs_pairs,
                                            tokenize_fn=copyseq_tokenize,
                                            opt=opt,
