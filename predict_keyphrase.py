@@ -113,14 +113,15 @@ class KeyphrasePredictor(object):
 
     def preprocess_input(self,src_str):
         test_dataset_name='kp20k'
-        tokenized_test_pairs = pykp.io.get_tokenized_pairs(src_str,self.model_opts,True)
+        clean_src_str = self.preprocess_query(src_str)
+        tokenized_test_pairs = pykp.io.get_tokenized_pairs(clean_src_str,self.model_opts,True)
         return pykp.io.process_dataset(tokenized_test_pairs,
                                            self.model_opts.word2id, self.model_opts.id2word,
                                            self.model_opts,
                                            dataset_name=test_dataset_name,
                                            data_type='test')
 
-    def process(self,input_str):
+    def process(self,input_str,top_n=8):
         one2one,one2many = self.preprocess_input(input_str)
         # test_data_loaders, word2id, id2word, vocab = load_vocab_and_testsets(self.opt,one2one,one2many)
         pin_memory = torch.cuda.is_available()
@@ -143,7 +144,26 @@ class KeyphrasePredictor(object):
         output = predict_beam_search(self.generator, test_one2many_loader, self.model_opts,
                              title='test_%s' % testset_name,
                              predict_save_path=None)#opt.pred_path + '/%s_test_result/' % (testset_name))
-        print(output)
+
+        return output[:top_n]
+
+    def removeSpecialChars(self, inputstring):
+        import string
+        translator = str.maketrans('', '', string.punctuation.replace('-',''))
+        # inputstring = 'string with "punctuation" inside of it! Does this work? I hope so.'
+        # print('hello', inputstring)
+        inputstring = inputstring.decode('utf-8').translate(translator)
+        return inputstring
+
+    def preprocess_query(self, inputstring):
+        inputstring = inputstring.lower().strip().encode('ascii',errors='ignore')
+        inputstring = self.removeSpecialChars(inputstring)
+        inputstring = self.removeWhiteSpace(inputstring)
+        return inputstring
+
+    def removeWhiteSpace(self, inputstring):
+        outputstring = " ".join(inputstring.split())
+        return outputstring
 
 
 def load_vocab_and_testsets(opt,test_one2one,test_one2many):
@@ -214,6 +234,18 @@ def main():
     except Exception as e:
         logger.error(e, exc_info=True)
 
-if __name__ == '__main__':
+def main():
+    import pandas as pd
+    # import sys
+    # sys.argv = 'python -data data_custom/kp20k/kp20k -vocab data_custom/kp20k/kp20k.vocab.pt -exp_path "./exp-custom/attn_general.input_feeding.copy/%s.%s" -train_from "exp-custom/attn_general.input_feeding.copy/kp20k-custom.ml.copy.20190102-100747/model/kp20k-custom.ml.copy.epoch=5.batch=40.total_batch=480.model" -model_path "./model/attn_general.input_feeding.copy/%s.%s" -pred_path "./pred-custom/attn_general.input_feeding.copy/%s.%s" -exp "kp20k-custom" -batch_size 256 -bidirectional -copy_attention -beam_size 16 -beam_search_batch_size 32 -train_ml -attention_mode general -input_feeding -min_src_seq_length 5 -vocab_size 2107 -device_ids 0'.replace('"','').split(' ')
     kp = KeyphrasePredictor()
-    kp.process('what would you charge me on pay order non-correspondent bank for privilege special scheme savings account')
+    data = pd.read_csv('./kbsearch.solrcore2.csv',encoding='utf-8')
+    extract_products = lambda x:';'.join(kp.process(x))
+    extract_products(data['question'].iloc[1])
+    data['products'] = data['question'].apply(extract_products)
+    data.to_csv('output.csv')
+
+if __name__ == '__main__':
+    main()
+    # kp = KeyphrasePredictor()
+    # kp.process('what would you charge me on pay order non-correspondent bank for privilege special scheme savings account')
